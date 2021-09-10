@@ -4,6 +4,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const _ = require('lodash');
+const mongoose = require('mongoose');
 
 
 const homeStartingContent = "Lacus vel facilisis volutpat est velit egestas dui id ornare. Semper auctor neque vitae tempus quam. Sit amet cursus sit amet dictum sit amet justo. Viverra tellus in hac habitasse. Imperdiet proin fermentum leo vel orci porta. Donec ultrices tincidunt arcu non sodales neque sodales ut. Mattis molestie a iaculis at erat pellentesque adipiscing. Magnis dis parturient montes nascetur ridiculus mus mauris vitae ultricies. Adipiscing elit ut aliquam purus sit amet luctus venenatis lectus. Ultrices vitae auctor eu augue ut lectus arcu bibendum at. Odio euismod lacinia at quis risus sed vulputate odio ut. Cursus mattis molestie a iaculis at erat pellentesque adipiscing.";
@@ -11,16 +12,38 @@ const aboutContent = "Hac habitasse platea dictumst vestibulum rhoncus est pelle
 const contactContent = "Scelerisque eleifend donec pretium vulputate sapien. Rhoncus urna neque viverra justo nec ultrices. Arcu dui vivamus arcu felis bibendum. Consectetur adipiscing elit duis tristique. Risus viverra adipiscing at in tellus integer feugiat. Sapien nec sagittis aliquam malesuada bibendum arcu vitae. Consequat interdum varius sit amet mattis. Iaculis nunc sed augue lacus. Interdum posuere lorem ipsum dolor sit amet consectetur adipiscing elit. Pulvinar elementum integer enim neque. Ultrices gravida dictum fusce ut placerat orci nulla. Mauris in aliquam sem fringilla ut morbi tincidunt. Tortor posuere ac ut consequat semper viverra nam libero.";
 
 const app = express();
-let list = [];
 app.set('view engine', 'ejs');
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
+mongoose.connect("mongodb://localhost:27017/blogDB",{ useNewUrlParser: true });
 
+
+const blogSchema = {
+  title: String,
+  post: String
+};
+
+const Blog = mongoose.model("Blog", blogSchema);
+
+// const blog  = new Blog ({
+//   title: "Home",
+//   post: "Lacus vel facilisis volutpat est velit egestas dui id ornare. Semper auctor neque vitae tempus quam. Sit amet cursus sit amet dictum sit amet justo. Viverra tellus in hac habitasse. Imperdiet proin fermentum leo vel orci porta. Donec ultrices tincidunt arcu non sodales neque sodales ut. Mattis molestie a iaculis at erat pellentesque adipiscing. Magnis dis parturient montes nascetur ridiculus mus mauris vitae ultricies. Adipiscing elit ut aliquam purus sit amet luctus venenatis lectus. Ultrices vitae auctor eu augue ut lectus arcu bibendum at. Odio euismod lacinia at quis risus sed vulputate odio ut. Cursus mattis molestie a iaculis at erat pellentesque adipiscing.
+// "
+// });
+//
+// blog.save();
 
 app.get("/",function(req,res){
-  console.log(list);
-  res.render("home", {home: homeStartingContent, post: list});
+  // console.log(list);
+  Blog.find({}, function(err,result){
+    if(!err){
+      res.render("home", {home: homeStartingContent, post: result});
+    }
+    else{
+      console.log(err);
+    }
+  });
 });
 
 app.get("/about",function(req,res){
@@ -36,29 +59,43 @@ app.get("/compose",function(req,res){
 });
 
 app.post("/compose",function(req,res){
-  console.log(list);
+  //console.log(list);
 
-  const post = {
+  const newBlog = new Blog({
     title: req.body.Title,
-    blog : req.body.blog
-  }
+    post : req.body.blog
+  });
 
-  list.push(post);
+  // const post = {
+  //   title: req.body.Title,
+  //   blog : req.body.blog
+  // }
+
+  //list.push(post);
+  newBlog.save();
   res.redirect("/");
 })
 
 app.get("/posts/:postName",function(req,res){
   var name = (req.params.postName);
-  list.forEach(function(post) {
+  // .forEach(function(post) {
+  //
+  //   var ch = post.title;
+  //   if(_.lowerCase(name)===_.lowerCase(ch)){
+  //     res.render("post",{
+  //       postTitle: post.title,
+  //       blogPost:post.blog
+  //     });
+  //   }
+  // });
 
-    var ch = post.title;
-    if(_.lowerCase(name)===_.lowerCase(ch)){
-      res.render("post",{
-        postTitle: post.title,
-        blogPost:post.blog
-      });
+  Blog.findOne({title: name}, function(err,result){
+    if(err){
+      console.log(err);
+    }else{
+      res.render("post",{postTitle: result.title, blogPost: result.post});
     }
-  });
+  })
 
 })
 

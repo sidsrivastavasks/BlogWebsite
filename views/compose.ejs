@@ -1,6 +1,7 @@
 <%- include("partials/header") -%>
 
-  <h1>Compose</h1>
+<div class="card">
+  <center><h1>Compose</h1></center>
   <form class="publish" action="/compose" method="post">
 
     <div class="form-group">
@@ -10,8 +11,10 @@
       <textarea name="blog" class="form-control" id="exampleFormControlTextarea1" rows="5" cols="80"></textarea>
     </div>
 
-    <button type="submit" class="btn btn-primary mb-2">Publish</button>
+    <center><button type="submit" class="btn btn-primary mb-2">Publish</button></center>
 
   </form>
+
+  </div>
 
 <%- include("partials/footer") -%>
