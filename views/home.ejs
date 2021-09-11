@@ -4,14 +4,20 @@
 <p><%=home%></p>
 <center><h2>Recent Posts</h2></center>
 <hr style="height:2px;border-width:0;width:50%;color:gray;background-color:gray">
-  <%post.forEach(function(ele) {%>
-    <div class="card">
-      <h3><%=ele.title%></h3>
-      <p><%=ele.post.substring(0,100) + " ..."%>
-        <a href="/posts/<%=ele.title%>">Read More</a>
-      </p>
 
-    </div>
+  <% allUser.forEach(function(blog) { %>
+
+    <% blog.article.forEach(function(ele){ %>
+
+        <div class="card">
+          <h3><%=ele.title%></h3>
+          <p><%=ele.post.substring(0,100) + " ..."%>
+            <a href="/posts/<%=ele.id%>">Read More</a>
+          </p>
+        </div>
+
+    <%})%>
+
   <%})%>
 
 
