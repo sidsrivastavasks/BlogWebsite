@@ -39,7 +39,7 @@ mongoose.connect("mongodb://localhost:27017/blogDB",{ useNewUrlParser: true });
 
 
 const blogSchema = new mongoose.Schema({
-  email: String,
+  username: String,
   password: String,
   article: [{title: String, post: String}]
 });
@@ -112,36 +112,78 @@ app.get("/compose",function(req,res){
 
 app.post("/register",function(req,res){
 
-  Blog.register({username: req.body.username}, req.body.password, function(err,user){
-    if(err){
-      console.log(err);
-      res.redirect("/register");
-    }else{
-      passport.authenticate("local")(req, res, function(){
-        res.redirect("/login");
+  Blog.findOne({username: req.body.username}, function(err,data){
+    if(!data){
+      Blog.register({username: req.body.username}, req.body.password, function(err,user){
+        if(err){
+          console.log(err);
+            res.redirect("/register");
+        }
+        else{
+          passport.authenticate("local")(req, res, function(){
+            res.redirect("/login");
+          });
+        }
+
       });
     }
+    else{
+      
+      res.redirect("/login");
+    }
   });
+  // Blog.register({username: req.body.username}, req.body.password, function(err,user){
+  //   if(err){
+  //
+  //   }
+  //   else{
+  //     passport.authenticate("local")(req, res, function(){
+  //       res.redirect("/login");
+  //     });
+  //   }
+  //
+  // });
 
 });
 
-app.post("/login",function(req,res){
-  const blog = new Blog({
-    username: req.body.username,
-    password: req.body.password
-  });
-  
-  req.login(blog, function(err){
-    if(err){
-      console.log(err);
-    }else{
-      passport.authenticate("local")(req, res, function(){
-        console.log(req.user);
-        res.redirect("/home");
-      });
-    }
-  });
+// app.post("/register",function(req,res){
+//
+//   Blog.register({username: req.body.username}, req.body.password, function(err,user){
+//     if(err){
+//       console.log(err);
+//       res.redirect("/register");
+//     }else{
+//       passport.authenticate("local")(req, res, function(){
+//         res.redirect("/login");
+//       });
+//     }
+//   });
+//
+// });
 
+app.post("/login",function(req,res){
+
+  Blog.findOne({username: req.body.username}, function(err, data){
+    if(data){
+      const blog = new Blog({
+        username: req.body.username,
+        password: req.body.password
+      });
+
+      req.login(blog, function(err){
+        if(err){
+          console.log(err);
+        }else{
+          passport.authenticate("local")(req, res, function(){
+            console.log(req.user);
+            res.redirect("/home");
+          });
+        }
+      });
+    }else{
+      res.redirect("/");
+    }
+  })
 });
 
 app.post("/compose",function(req,res){

@@ -1,6 +1,8 @@
-
+*{
+  color: white;
+}
 body {
-  background-color: #E8ECEF;
+  background-color:#8b8787;
 }
 
 .centered {
@@ -13,4 +15,14 @@ body {
   font-size: 2rem;
   color: res;
   background-color: #000;
+}
+.jumbotron {
+    padding: 2rem 1rem;
+    margin-bottom: 2rem;
+    background-color: black;
+    border-radius: .3rem;
+}
+.centered {
+    padding-top: 200px;
+    text-align: center;
 }
