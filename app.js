@@ -35,7 +35,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-mongoose.connect("mongodb://localhost:27017/blogDB",{ useNewUrlParser: true });
+mongoose.connect("mongodb+srv://admin-siddhant:Siddhant%402001@cluster0.mycmn.mongodb.net/blogDB",{ useNewUrlParser: true });
 
 
 const blogSchema = new mongoose.Schema({
@@ -128,7 +128,7 @@ app.post("/register",function(req,res){
       });
     }
     else{
-      
+
       res.redirect("/login");
     }
   });
@@ -229,7 +229,12 @@ app.get("/posts/:postID",function(req,res){
 });
 
 
+let port = process.env.PORT;
+if(port==null || port==""){
+  port = 3000;
+}
 
-app.listen(3000, function() {
+
+app.listen(port, function() {
   console.log("Server started on port 3000");
 });
